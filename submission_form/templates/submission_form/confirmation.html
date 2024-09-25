@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Results</title>
+  </head>
+  <body>
+    {% if cfrm_obj %}
+    <p>Entry Submitted Successfully! {{cfrm_obj.name}} - {{cfrm_obj.age}} - {{cfrm_obj.title}} - {{cfrm_obj.hometown}}</p>
+    {% endif%}
+    {% if results_list %}
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Title</th>
+        <th>Hometown</th>
+      </tr>
+      {% for rec in results_list %}
+      <tr>
+        <td>{{ rec.name }}</td>
+        <td>{{ rec.age }}</td>
+        <td>{{ rec.title }}</td>
+        <td>{{ rec.hometown }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+      <p>No records available.</p>
+    {% endif %}
+    <a href="{% url 'index' %}"><button type="button">Add Record</button></a>
+  </body>
+</html>
