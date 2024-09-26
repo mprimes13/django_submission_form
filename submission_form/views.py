@@ -1,21 +1,22 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from .models import Personal
+from .forms import SubmissionForm
 
 # Create your views here.
 def index(request):
-    err = request.GET.get("error", None)
-    return render(request, 'submission_form/index.html', {'error': err})
-
-def submit(request):
-    if request.POST:
-        req = request.POST
-        if len(req['name'].strip(' ')) == 0 or len(req['title'].strip(' ')) == 0:
+    if request.method == 'POST':
+        form = SubmissionForm(request.POST)
+        if form.is_valid():
+            p = Personal(**form.cleaned_data)
+            p.save()
+            return HttpResponseRedirect(f'confirmation/{p.id}')
+        else:
             return HttpResponseRedirect('/?error=Name or Title Must be populated by characters other than whitespaces.')
-
-        p = Personal(name=req['name'].strip(), title=req['title'].strip(), age=req['age'], hometown=req['hometown'].strip())
-        p.save()
-    return HttpResponseRedirect(f'confirmation/{p.id}')
+    else:
+        err  = request.GET.get("error", None)
+        form = SubmissionForm()
+        return render(request, 'submission_form/index.html', {'error': err, 'form': form})
 
 def confirmation(request, entry_id=None):
     params = {'results_list': Personal.objects.order_by('-id')}
